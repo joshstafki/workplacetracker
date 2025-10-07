@@ -375,6 +375,60 @@
   const app = initializeApp(firebaseConfig);
   const analytics = getAnalytics(app);
 </script>
+<script type="module">
+  import { 
+    getAuth, 
+    signInWithPopup, 
+    GoogleAuthProvider, 
+    signOut, 
+    onAuthStateChanged 
+  } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
+  const auth = getAuth();
+  const provider = new GoogleAuthProvider();
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const loginBtn = document.getElementById("login");
+    const logoutBtn = document.getElementById("logout");
+    const status = document.getElementById("status");
+
+    if (!loginBtn || !logoutBtn) {
+      console.error("Login/logout buttons not found!");
+      return;
+    }
+
+    // Sign in
+    loginBtn.addEventListener("click", async () => {
+      try {
+        const result = await signInWithPopup(auth, provider);
+        alert(`Welcome ${result.user.displayName}!`);
+      } catch (error) {
+        console.error(error);
+        alert("Sign-in failed: " + error.message);
+      }
+    });
+
+    // Sign out
+    logoutBtn.addEventListener("click", async () => {
+      await signOut(auth);
+      alert("Signed out!");
+    });
+
+    // Track login state
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        status.textContent = `Logged in as ${user.displayName}`;
+        loginBtn.style.display = "none";
+        logoutBtn.style.display = "inline-block";
+      } else {
+        status.textContent = "Not logged in";
+        loginBtn.style.display = "inline-block";
+        logoutBtn.style.display = "none";
+      }
+    });
+  });
+</script>
+
+    
 </body>
 </html>
