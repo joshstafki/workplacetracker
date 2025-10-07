@@ -1,368 +1,184 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Productivity Pacing Tracker</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Productivity Pacing Tracker</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
 
-        :root {
-            --background-color: #f4f7f6;
-            --text-color: #333;
-            --container-bg: #ffffff;
-            --shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            
-            /* Pacing colors */
-            --on-pace-start: #26D0CE;
-            --on-pace-end: #1A2980;
-            --ahead-start: #FDBB2D;
-            --ahead-end: #22C1C3;
-            --behind-start: #F4D03F;
-            --behind-end: #16A085;
-        }
+:root {
+    --background-color: #f4f7f6;
+    --text-color: #333;
+    --container-bg: #ffffff;
+    --shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    --on-pace-start: #26D0CE;
+    --on-pace-end: #1A2980;
+    --ahead-start: #FDBB2D;
+    --ahead-end: #22C1C3;
+    --behind-start: #F4D03F;
+    --behind-end: #16A085;
+}
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
-        }
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+}
 
-        .container {
-            background: var(--container-bg);
-            border-radius: 20px;
-            box-shadow: var(--shadow);
-            padding: 30px 40px;
-            width: 100%;
-            max-width: 600px;
-            text-align: center;
-        }
+.container {
+    background: var(--container-bg);
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    padding: 30px 40px;
+    width: 100%;
+    max-width: 600px;
+    text-align: center;
+}
 
-        h1 {
-            color: #1A2980;
-            margin-bottom: 10px;
-        }
+h1 { color: #1A2980; margin-bottom: 10px; }
+p { color: #777; margin-bottom: 30px; }
 
-        p {
-            color: #777;
-            margin-bottom: 30px;
-        }
+.thermometer-container {
+    background-color: #e0e0e0;
+    border-radius: 50px;
+    padding: 5px;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
 
-        .thermometer-container {
-            background-color: #e0e0e0;
-            border-radius: 50px;
-            padding: 5px;
-            margin-bottom: 20px;
-            overflow: hidden;
-        }
+.thermometer-fill {
+    height: 30px;
+    width: 0%;
+    border-radius: 45px;
+    transition: width 0.5s ease-in-out, background 0.5s;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(90deg, var(--on-pace-start), var(--on-pace-end));
+}
 
-        .thermometer-fill {
-            height: 30px;
-            width: 0%;
-            border-radius: 45px;
-            transition: width 0.5s ease-in-out, background 0.5s;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(90deg, var(--on-pace-start), var(--on-pace-end));
-        }
-        
-        /* Color classes for pacing */
-        .thermometer-fill.ahead {
-             background: linear-gradient(90deg, var(--ahead-start), var(--ahead-end));
-        }
-        .thermometer-fill.behind {
-             background: linear-gradient(90deg, var(--behind-start), var(--behind-end));
-        }
+.thermometer-fill.ahead { background: linear-gradient(90deg, var(--ahead-start), var(--ahead-end)); }
+.thermometer-fill.behind { background: linear-gradient(90deg, var(--behind-start), var(--behind-end)); }
 
-        .thermometer-text {
-            color: white;
-            font-weight: 600;
-            font-size: 14px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
-        }
+.thermometer-text { color: white; font-weight: 600; font-size: 14px; text-shadow: 1px 1px 2px rgba(0,0,0,0.2); }
 
-        #time-display {
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 30px;
-            color: #333;
-        }
-        
-        #time-display span {
-            display: inline-block;
-            margin: 0 10px;
-        }
-        
-        .work-logged { color: #16A085; }
-        .time-elapsed { color: #777; }
+#time-display { font-size: 1.2rem; font-weight: 600; margin-bottom: 30px; color: #333; }
+#time-display span { display: inline-block; margin: 0 10px; }
+.work-logged { color: #16A085; }
+.time-elapsed { color: #777; }
 
-        .button-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 15px;
-            margin-bottom: 30px;
-        }
+.button-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 15px;
+    margin-bottom: 30px;
+}
 
-        .action-btn {
-            background-color: #1A2980;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            padding: 15px;
-            font-size: 1rem;
-            font-weight: 400;
-            cursor: pointer;
-            transition: transform 0.2s, background-color 0.2s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
+.action-btn {
+    background-color: #1A2980;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 15px;
+    font-size: 1rem;
+    font-weight: 400;
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
 
-        .action-btn:hover {
-            transform: translateY(-3px);
-            background-color: #2638a1;
-        }
-        
-        .btn-time {
-            font-size: 0.8rem;
-            opacity: 0.8;
-            margin-top: 5px;
-        }
+.action-btn:hover { transform: translateY(-3px); background-color: #2638a1; }
+.btn-time { font-size: 0.8rem; opacity: 0.8; margin-top: 5px; }
 
-        .fact-container {
-            background-color: #f0f5ff;
-            border-left: 5px solid var(--ahead-start);
-            border-radius: 10px;
-            padding: 20px;
-            margin-top: 20px;
-            text-align: left;
-            display: none; /* Initially hidden */
-        }
+.fact-container {
+    background-color: #f0f5ff;
+    border-left: 5px solid var(--ahead-start);
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+    text-align: left;
+    display: none;
+}
 
-        .fact-container h3 {
-            margin-top: 0;
-            color: #1A2980;
-        }
+.fact-container h3 { margin-top: 0; color: #1A2980; }
+#productivity-fact { font-style: italic; color: #555; }
 
-        #productivity-fact {
-            font-style: italic;
-            color: #555;
-        }
+.export-section { margin-top: 30px; }
+#export-btn {
+    background-color: #2ecc71;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.2s;
+}
 
-        .export-section {
-            margin-top: 30px;
-        }
-
-        #export-btn {
-            background-color: #2ecc71;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: background-color 0.2s;
-        }
-
-        #export-btn:hover {
-            background-color: #27ae60;
-        }
-        
-    </style>
-    
+#export-btn:hover { background-color: #27ae60; }
+</style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>Productivity Pacing ⏱️</h1>
-        <p>Are you keeping up with the clock? Log tasks to see your efficiency!</p>
+<div class="container">
+    <h1>Productivity Pacing ⏱️</h1>
+    <p>Are you keeping up with the clock? Log tasks to see your efficiency!</p>
 
-        <div id="time-display">
-            <span class="work-logged">Work Logged: 0m</span> | <span class="time-elapsed">Time Elapsed: 0m</span>
-        </div>
-        
-        <div class="thermometer-container">
-            <div class="thermometer-fill" id="thermometer-fill">
-                 <span class="thermometer-text" id="thermometer-text">Start by logging a task</span>
-            </div>
-        </div>
-
-        <div class="button-grid">
-            <button class="action-btn" data-time="8">EDI <span class="btn-time">(8 min)</span></button>
-            <button class="action-btn" data-time="10">Order Entry <span class="btn-time">(10 min)</span></button>
-            <button class="action-btn" data-time="5">Sent Email <span class="btn-time">(5 min)</span></button>
-            <button class="action-btn" data-time="10">Phone Call <span class="btn-time">(10 min)</span></button>
-        </div>
-
-        <div class="fact-container" id="fact-container">
-            <h3>Did You Know?</h3>
-            <p id="productivity-fact">Complete your first hour of work to unlock a fun fact!</p>
-        </div>
-
-        <div class="export-section">
-            <button id="export-btn">Export Pacing Report 📊</button>
-        </div>
-        <div id="auth-section" style="margin-top:20px;">
-               <p id="status">Not logged in</p>
-               <button id="login">Sign in with Google</button>
-               <button id="logout" style="display:none;">Sign out</button>
-        </div>
-
+    <div id="time-display">
+        <span class="work-logged">Work Logged: 0m</span> | 
+        <span class="time-elapsed">Time Elapsed: 0m</span>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Element references
-            const thermometerFill = document.getElementById('thermometer-fill');
-            const thermometerText = document.getElementById('thermometer-text');
-            const timeDisplay = document.getElementById('time-display');
-            const factContainer = document.getElementById('fact-container');
-            const productivityFact = document.getElementById('productivity-fact');
-            const actionButtons = document.querySelectorAll('.action-btn');
-            const exportBtn = document.getElementById('export-btn');
+    <div class="thermometer-container">
+        <div class="thermometer-fill" id="thermometer-fill">
+             <span class="thermometer-text" id="thermometer-text">Waiting for 8:00 AM…</span>
+        </div>
+    </div>
 
-            // State variables
-            let workMinutes = 0;
-            let startTime = null;
-            let timerInterval = null;
-            let lastHourMilestone = 0;
-            const taskLog = [];
-            
-            const productivityFacts = [
-                "You've worked for the average time it takes to watch two sitcom episodes.",
-                "That's enough time to hard-boil about 10 eggs!",
-                "You've been as productive as a bee visiting 6,000 flowers.",
-                "In this time, the Earth has traveled over 100,000 kilometers around the Sun.",
-                "That's the equivalent of a short ferry ride, like from Manhattan to Staten Island.",
-                "You could have listened to the entire 'Bohemian Rhapsody' about 10 times.",
-                "This is roughly the time it takes for a high-speed train in Japan to travel 320 kilometers.",
-                "Congratulations, you've reached the 'Mount Everest Base Camp' of your workday!"
-            ];
+    <div class="button-grid">
+        <button class="action-btn" data-time="8">EDI <span class="btn-time">(8 min)</span></button>
+        <button class="action-btn" data-time="10">Order Entry <span class="btn-time">(10 min)</span></button>
+        <button class="action-btn" data-time="5">Sent Email <span class="btn-time">(5 min)</span></button>
+        <button class="action-btn" data-time="10">Phone Call <span class="btn-time">(10 min)</span></button>
+    </div>
 
-            actionButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    if (!startTime) {
-                        startTime = new Date();
-                        // Start the continuous timer
-                        timerInterval = setInterval(updateTracker, 1000);
-                    }
+    <div class="fact-container" id="fact-container">
+        <h3>Did You Know?</h3>
+        <p id="productivity-fact">Complete your first hour of work to unlock a fun fact!</p>
+    </div>
 
-                    const timeToAdd = parseInt(button.dataset.time, 10);
-                    workMinutes += timeToAdd;
+    <div class="export-section">
+        <button id="export-btn">Export Pacing Report 📊</button>
+    </div>
 
-                    const taskName = button.textContent.split('(')[0].trim();
-                    logTask(taskName, timeToAdd);
-                    
-                    // Update immediately on click for responsiveness
-                    updateTracker(); 
-                });
-            });
+    <div id="auth-section" style="margin-top:20px;">
+        <p id="status">Not logged in</p>
+        <button id="login">Sign in with Google</button>
+        <button id="logout" style="display:none;">Sign out</button>
+    </div>
+</div>
 
-            function formatTime(minutes) {
-                if (minutes < 1) return '0m';
-                const hours = Math.floor(minutes / 60);
-                const remainingMinutes = Math.floor(minutes % 60);
-                return `${hours > 0 ? hours + 'h ' : ''}${remainingMinutes}m`;
-            }
+<!-- Firebase Scripts -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-analytics.js";
+import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
-            function logTask(name, duration) {
-                const now = new Date();
-                const timestamp = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                taskLog.push({ timestamp, name, duration });
-            }
-            
-            function updateTracker() {
-                if (!startTime) return;
-
-                const elapsedMilliseconds = new Date() - startTime;
-                const elapsedMinutes = elapsedMilliseconds / 60000;
-
-                const pacingPercentage = elapsedMinutes > 0 ? (workMinutes / elapsedMinutes) * 100 : 0;
-
-                // 1. Update Thermometer
-                const displayWidth = Math.min(pacingPercentage, 100); // Cap visual width at 100%
-                thermometerFill.style.width = `${displayWidth}%`;
-                thermometerText.textContent = `${Math.round(pacingPercentage)}% Pacing`;
-
-                // Change color based on pacing
-                thermometerFill.classList.remove('ahead', 'behind');
-                if (pacingPercentage > 105) {
-                    thermometerFill.classList.add('ahead');
-                } else if (pacingPercentage < 95) {
-                    thermometerFill.classList.add('behind');
-                }
-
-                // 2. Update Time Display
-                timeDisplay.innerHTML = `<span class="work-logged">Work Logged: ${formatTime(workMinutes)}</span> | <span class="time-elapsed">Time Elapsed: ${formatTime(elapsedMinutes)}</span>`;
-                
-                // 3. Check for hourly work facts
-                const currentWorkHours = Math.floor(workMinutes / 60);
-                if (currentWorkHours > lastHourMilestone) {
-                    lastHourMilestone = currentWorkHours;
-                    displayNewFact(currentWorkHours);
-                }
-            }
-
-            function displayNewFact(hour) {
-                if (hour === 0) return;
-                factContainer.style.display = 'block';
-                const factIndex = (hour - 1) % productivityFacts.length;
-                productivityFact.textContent = productivityFacts[factIndex];
-            }
-
-            exportBtn.addEventListener('click', () => {
-                if (taskLog.length === 0) {
-                    alert('No data to export yet!');
-                    return;
-                }
-
-                const elapsedMinutes = (new Date() - startTime) / 60000;
-                const finalPacing = elapsedMinutes > 0 ? Math.round((workMinutes / elapsedMinutes) * 100) : 0;
-
-                let csvContent = "data:text/csv;charset=utf-8,Timestamp,Task,Duration (min)\n";
-                taskLog.forEach(log => {
-                    csvContent += `${log.timestamp},${log.name},${log.duration}\n`;
-                });
-
-                csvContent += "\n--- SUMMARY ---\n";
-                csvContent += `Total Work Logged,${formatTime(workMinutes)}\n`;
-                csvContent += `Total Time Elapsed,${formatTime(elapsedMinutes)}\n`;
-                csvContent += `Final Pacing Score,${finalPacing}%\n`;
-
-                const encodedUri = encodeURI(csvContent);
-                const link = document.createElement("a");
-                const today = new Date().toISOString().slice(0, 10);
-                link.setAttribute("href", encodedUri);
-                link.setAttribute("download", `pacing_report_${today}.csv`);
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            });
-
-        });
-    </script>
-    <script type="module">
-  // Import the functions you need from the SDKs you need
-  import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
+// Firebase config
+const firebaseConfig = {
     apiKey: "AIzaSyBugPjo4Ccra5ujtQS-LDCY83wp23akvLY",
     authDomain: "productivity-tracker-jds.firebaseapp.com",
     projectId: "productivity-tracker-jds",
@@ -370,71 +186,173 @@
     messagingSenderId: "7964115121",
     appId: "1:7964115121:web:61fea428943e80374d2290",
     measurementId: "G-65C862022F"
-  };
+};
 
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-</script>
-<script type="module">
-  import { 
-    getAuth, 
-    signInWithPopup, 
-    GoogleAuthProvider, 
-    signOut, 
-    onAuthStateChanged 
-  } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-
-  const auth = getAuth();
-    import { setPersistence, browserLocalPersistence } 
-  from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+const auth = getAuth();
 setPersistence(auth, browserLocalPersistence);
-  const provider = new GoogleAuthProvider();
+const provider = new GoogleAuthProvider();
+const db = getFirestore(app);
 
- const db = getFirestore(app);
+// DOM elements
+const loginBtn = document.getElementById("login");
+const logoutBtn = document.getElementById("logout");
+const status = document.getElementById("status");
+const actionButtons = document.querySelectorAll(".action-btn");
+const thermometerFill = document.getElementById("thermometer-fill");
+const thermometerText = document.getElementById("thermometer-text");
+const timeDisplay = document.getElementById("time-display");
+const factContainer = document.getElementById("fact-container");
+const productivityFact = document.getElementById("productivity-fact");
+const exportBtn = document.getElementById("export-btn");
 
-  document.addEventListener("DOMContentLoaded", () => {
-    const loginBtn = document.getElementById("login");
-    const logoutBtn = document.getElementById("logout");
-    const status = document.getElementById("status");
+// State
+let workMinutes = 0;
+let lastHourMilestone = 0;
+const taskLog = [];
 
-    if (!loginBtn || !logoutBtn) {
-      console.error("Login/logout buttons not found!");
-      return;
-    }
+// Productivity facts
+const productivityFacts = [
+    "You've worked for the average time it takes to watch two sitcom episodes.",
+    "That's enough time to hard-boil about 10 eggs!",
+    "You've been as productive as a bee visiting 6,000 flowers.",
+    "In this time, the Earth has traveled over 100,000 kilometers around the Sun.",
+    "That's the equivalent of a short ferry ride, like from Manhattan to Staten Island.",
+    "You could have listened to the entire 'Bohemian Rhapsody' about 10 times.",
+    "This is roughly the time it takes for a high-speed train in Japan to travel 320 kilometers.",
+    "Congratulations, you've reached the 'Mount Everest Base Camp' of your workday!"
+];
 
-    // Sign in
-    loginBtn.addEventListener("click", async () => {
-      try {
-        const result = await signInWithPopup(auth, provider);
-        alert(`Welcome ${result.user.displayName}!`);
-      } catch (error) {
-        console.error(error);
-        alert("Sign-in failed: " + error.message);
-      }
-    });
+// --- Helper Functions ---
+function formatTime(minutes) {
+    if (minutes < 1) return '0m';
+    const hours = Math.floor(minutes / 60);
+    const remainingMinutes = Math.floor(minutes % 60);
+    return `${hours > 0 ? hours + 'h ' : ''}${remainingMinutes}m`;
+}
 
-    // Sign out
-    logoutBtn.addEventListener("click", async () => {
-      await signOut(auth);
-      alert("Signed out!");
-    });
+function getTodayKey() {
+    const now = new Date();
+    return `${now.getFullYear()}-${(now.getMonth()+1).toString().padStart(2,'0')}-${now.getDate().toString().padStart(2,'0')}`;
+}
 
-    // Track login state
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
+// --- Firebase Session Persistence ---
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
         status.textContent = `Logged in as ${user.displayName}`;
         loginBtn.style.display = "none";
         logoutBtn.style.display = "inline-block";
-      } else {
+
+        // Load today’s data from Firestore
+        const dayKey = getTodayKey();
+        const docRef = doc(db, "users", user.uid, "days", dayKey);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            workMinutes = data.workMinutes || 0;
+            taskLog.length = 0;
+            if(data.taskLog) data.taskLog.forEach(t=>taskLog.push(t));
+            lastHourMilestone = Math.floor(workMinutes / 60);
+        }
+    } else {
         status.textContent = "Not logged in";
         loginBtn.style.display = "inline-block";
         logoutBtn.style.display = "none";
-      }
+    }
+});
+
+// Sign in/out
+loginBtn.addEventListener("click", async () => {
+    try { await signInWithPopup(auth, provider); } 
+    catch(e){ alert(e.message); console.error(e); }
+});
+logoutBtn.addEventListener("click", async () => { await signOut(auth); });
+
+// --- Task Logging ---
+actionButtons.forEach(button => {
+    button.addEventListener("click", async () => {
+        const taskName = button.textContent.split("(")[0].trim();
+        const taskTime = parseInt(button.dataset.time,10);
+
+        workMinutes += taskTime;
+        const timestamp = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+        taskLog.push({ name: taskName, duration: taskTime, timestamp });
+
+        // Update Firestore if logged in
+        const user = auth.currentUser;
+        if(user){
+            const dayKey = getTodayKey();
+            await setDoc(doc(db, "users", user.uid, "days", dayKey), { workMinutes, taskLog });
+        }
     });
-  });
+});
+
+// --- Timer 8AM-4PM ---
+function getWorkTimes() {
+    const now = new Date();
+    const start = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 8,0,0);
+    const end = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 16,0,0);
+    return { start, end };
+}
+
+function updateTracker() {
+    const now = new Date();
+    const { start, end } = getWorkTimes();
+    if(now < start){
+        thermometerFill.style.width = "0%";
+        thermometerText.textContent = "Waiting for 8:00 AM…";
+        timeDisplay.innerHTML = `<span class="work-logged">Work Logged: ${formatTime(workMinutes)}</span> | <span class="time-elapsed">Time Elapsed: 0m</span>`;
+        return;
+    }
+
+    const effectiveNow = now > end ? end : now;
+    const elapsedMinutes = (effectiveNow - start)/60000;
+
+    const pacingPercentage = elapsedMinutes > 0 ? (workMinutes/elapsedMinutes)*100 : 0;
+    thermometerFill.style.width = `${Math.min(pacingPercentage,100)}%`;
+    thermometerText.textContent = `${Math.round(pacingPercentage)}% Pacing`;
+    thermometerFill.classList.remove('ahead','behind');
+    if(pacingPercentage>105) thermometerFill.classList.add('ahead');
+    else if(pacingPercentage<95) thermometerFill.classList.add('behind');
+
+    timeDisplay.innerHTML = `<span class="work-logged">Work Logged: ${formatTime(workMinutes)}</span> | <span class="time-elapsed">Time Elapsed: ${formatTime(elapsedMinutes)}</span>`;
+
+    const currentWorkHours = Math.floor(workMinutes / 60);
+    if(currentWorkHours > lastHourMilestone){
+        lastHourMilestone = currentWorkHours;
+        displayNewFact(currentWorkHours);
+    }
+}
+
+function displayNewFact(hour){
+    if(hour===0) return;
+    factContainer.style.display = 'block';
+    productivityFact.textContent = productivityFacts[(hour-1)%productivityFacts.length];
+}
+
+// Export CSV
+exportBtn.addEventListener("click", () => {
+    if(taskLog.length===0){ alert("No data to export!"); return; }
+    const { start } = getWorkTimes();
+    const elapsedMinutes = (new Date()-start)/60000;
+    let csv = "data:text/csv;charset=utf-8,Timestamp,Task,Duration (min)\n";
+    taskLog.forEach(t=> csv += `${t.timestamp},${t.name},${t.duration}\n`);
+    csv += `\n--- SUMMARY ---\nTotal Work Logged,${formatTime(workMinutes)}\nTotal Time Elapsed,${formatTime(elapsedMinutes)}\nFinal Pacing Score,${Math.round((workMinutes/elapsedMinutes)*100)}%\n`;
+    const link = document.createElement("a");
+    link.setAttribute("href", encodeURI(csv));
+    const today = getTodayKey();
+    link.setAttribute("download", `pacing_report_${today}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+});
+
+// Start timer interval
+setInterval(updateTracker,1000);
+updateTracker();
 </script>
 
-    
 </body>
 </html>
