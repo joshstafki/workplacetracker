@@ -385,6 +385,9 @@
   } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
   const auth = getAuth();
+    import { setPersistence, browserLocalPersistence } 
+  from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+setPersistence(auth, browserLocalPersistence);
   const provider = new GoogleAuthProvider();
 
   document.addEventListener("DOMContentLoaded", () => {
